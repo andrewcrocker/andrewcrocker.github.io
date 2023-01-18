@@ -1,104 +1,41 @@
----
-layout: project
-title: Segment Builder
-project: Segment Builder
----
-<section class="w intro">
 
-<p>The moment before you <em>turn something on</em>&mdash;an email campaign for example&mdash;is one of the scariest in interfaces. Are all the settings correct?  Is this going to the right people?  Did you misspell the month again?</p>
+<!DOCTYPE html>
+<html>
+<head>
+<!-- <script src="//cdn.optimizely.com/js/3695480945.js"></script> -->
+<meta charset="utf-8">
+<title>Test</title>
 
-</section>
-<section class="w-s">
-<p>Users of Apptentive had the same fear, and most of their anxiety came from the targeting &amp; segmenting interface.  They must use tracking events and boolean operators to pick who their campaign would go to, in an interface which didn't do anything to help them feel confident about their choices.</p>
+<link rel="stylesheet" href="normalize.css">
+<link rel="stylesheet" href="css.css">
 
-<blockquote>Users could set it up perfectly and still say "I'm not sure I did it right"</blockquote>
+<style>
+</style>
+</head>
+<body class="">
+<div class="wrapper">
+  <h1>Welcome</h1>
 
+  <p><a href="A.html" target="_blank">First Link</a></p>
+  <p><a href="B.html" target="_blank">Second Link</a></p>
+  <p><a href="C.html" target="_blank">Third Link</a></p>
 
-<h2>Research</h2>
-
-<p>Our goal was to build something which could be used by someone with a low level of technical expertise, and was still powerful enough for complex targeting logic. We defined several segments representative of things that our personas regularly target. We used these  segments as guides when designing, and as tasks while running user tests.</p>
-
-<p>We then ran user tests to record people going through interactive HTML prototypes of three variations.  If people could successfully complete our persona's example segments, then we counted that as a success.</p>
-
-<p class="center">
-  <a href="/segment-builder/segment/main.html" class="button" target="_blank"><span>View User Testing prototypes</span></a>
-</p>
-</section>
-
-<section class="w-l">
-<div class="w-s"><h2>Handling the details</h2></div>
-<p class="w-s">The most successful segment builder we tested focused on building simple segments quickly &mdash; roughing out the overall plan, like a sketch &mdash; before filling in the details.  Many rules are simple Key - Operator - Value sets.</p>
-<img src="/i/sb/rule-1.png" width="1040" alt="Rule with no details" class="i-center">
-<p class="w-s">Some rules may have an optional clarifying detail.  Users can access these additional levels after filling out the initial rule and opening the rule's "Details".</p>
-<img src="/i/sb/rule-2.png" width="1040" alt="Rule with some details" class="i-center">
-<p class="w-s">And for some rules, there are multiple available details.  These stack, so each additional detail adds further specificity the parent rule.</p>
-<img src="/i/sb/rule-3-tall.png"  width="1040" alt="Rule with lots of details" class="i-center">
-</section>
-<section class="w-s">
-  <p>Hiding the details for a rule behind a click allowed people who had never built a user targeting segment to approach this without feeling intimidated.  Brand new users could focus on building an outline of their segment quickly &mdash; roughing out the overall plan &mdash; before filling in the details.</p>
-</section>
-
-<hr class="w-s">
-
-<h1>Example Segment</h1>
-<div class="center">
+  <div class="aside">
+    In the actual user test, the three options above were randomized, so the final option woudln't succeed simply because people get better at the <strong>concept</strong> of segmenting users.
+    <br />
+    <br />
+    There are a lot of rough edges inside the prototypes, but the path to completion of persona segments was a complete one.  Any of the persona segments could have been completed with any of the prototypes.
+    <br />
+    <br />
+    <ul>
+      <li><strong>First Link</strong> is a recreation of segment editor we were currently using, which was designed about 2 years prior.  This one performed OK as long as it was not first in the test: people could understand it if they had experience building segments, but it was intemidating if it was their first exposure to the concept.</li>
+      <li><strong>Second Link</strong> is the "buried details" version.  Users could potentially make a decent segment without ever dipping down into details, and they could easily read the results at a later time.  This was the overall winner, and it served as the foundation of what we implemented.</li>
+      <li><strong>Third Link</strong> is the "wizard" prototype, where people could modify most of the details of a question with the mouse in a flyout helper.  This did astonishingly poorly.</li>
 
 
-<video id="video1" preload controls width="1034" height="652">
-  <source src="/i/sb/example.mov">
-  <source src="/i/sb/example.webm">
-</video>
-<div class="caption">Having trouble with the video? <a href="/i/sb/example.mov" target="_blank">download the .mov file</a></div>
-</div>
-
-
-
-<hr class="w-s">
-<section class="w">
-
-  <h1 class="no-margin">Results</h1>
-  <div class="grid-2">
-    <ul class="cell">
-      <li>Decrease time-to-live on customer projects.</li>
-      <li>Less 'backtracking' where people would delete their whole segment just to make a couple edits.</li>
-    </ul>
-    <ul class="cell">
-      <li>Positive feedback from customers.</li>
-      <li>New structure allows for more flexibility with future data types.</li>
     </ul>
   </div>
 
-</section>
-
-
-<script>
-var videos = document.getElementsByTagName("video"),
-fraction = 0.8;
-function checkScroll() {
-
-    for(var i = 0; i < videos.length; i++) {
-
-        var video = videos[i];
-
-        var x = video.offsetLeft, y = video.offsetTop, w = video.offsetWidth, h = video.offsetHeight, r = x + w, //right
-            b = y + h, //bottom
-            visibleX, visibleY, visible;
-
-            visibleX = Math.max(0, Math.min(w, window.pageXOffset + window.innerWidth - x, r - window.pageXOffset));
-            visibleY = Math.max(0, Math.min(h, window.pageYOffset + window.innerHeight - y, b - window.pageYOffset));
-
-            visible = visibleX * visibleY / (w * h);
-
-            if (visible > fraction) {
-                video.play();
-            } else {
-                video.pause();
-            }
-
-    }
-
-}
-
-window.addEventListener('scroll', checkScroll, false);
-window.addEventListener('resize', checkScroll, false);
-</script>
+</div>
+</body>
+</html>
