@@ -1,0 +1,111 @@
+<html>
+
+<head>
+  <script src="//cdn.optimizely.com/js/3695480945.js"></script>
+  <link rel="stylesheet" href="normalize.css">
+  <link rel="stylesheet" href="css.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
+
+  <script> $(document).ready(function(){
+
+    $( ".logic" ).on('change', ".add-rule", function(ev) {
+      var value = $(this).val();
+      var type = ev.currentTarget.options[ev.currentTarget.selectedIndex].getAttribute('data-field');
+
+      var htmlList = '';
+      if (type === 'time') {
+        htmlList = '<div class="rule"><div class="subject">' + value + '</div><div class="operator"><select><option>is less than</option><option>is more than</option><option>is at most</option><option>is at least</option></select></div><div class="predicate predicate-unit"><input type="number"><select class="unit"><option>days</option><option>hours</option><option>minutes</option></select> ago</div><div class="remove-row">remove</div></div>';
+      } else if (type === 'bool') {
+        htmlList = '<div class="rule"><div class="subject">' + value + '</div><div class="operator"><select><option>is</option><option>is not</option></select></div><div class="predicate"><input type="text"></div><div class="remove-row">remove</div></div>';
+      } else {
+        htmlList = '<div class="rule"><div class="subject">' + value + '</div><div class="operator"><select><option>is</option><option>is not</option><option>is less than</option><option>is more than</option><option>is at most</option><option>is at least</option></select></div><div class="predicate"><input type="text"></div><div class="remove-row">remove</div></div>';
+      }
+
+      $(this).parent( ".foot" ).before( htmlList );
+      $( ".rule:last" ).find(".operator select").focus();
+      $(this)[0].selectedIndex = 0;
+    });
+
+    $( ".logic" ).on('click', ".remove-row", function() {
+      $(this).parent(".rule").remove();
+    });
+
+    $( ".copy-segment").click(function(){
+      $( ".segment:last" ).clone().insertAfter( ".segment:last" ).find(".rule").remove();
+    });
+
+    $( ".logic" ).on('click', ".delete", function() {
+      $(this).parents(".segment").remove();
+    });
+
+  }); </script>
+
+</head>
+
+<body class="v-current">
+
+  <div class="wrapper">
+
+    <h1>Who</h1>
+    <div class="logic">
+
+      <div class="segment">
+        <div class="head">
+          <h4>Segment</h4>Matches all of the following:
+        </div>
+        <div class="foot">
+          <select class="add-rule" data-set="s1">Add a Rule
+            <option value="" disabled="" selected="selected">Add a Rule</option>
+            <optgroup label="Device">
+              <option data-field="time">First Seen</option>
+              <option data-field="bool">Locale Country Code</option>
+              <option data-field="bool">Locale Language Code</option>
+              <option data-field="bool">Model</option>
+              <option>OS Version</option>
+            </optgroup>
+            <optgroup label="Person">
+              <option>User_ID</option>
+              <option>Age</option>
+              <option data-field="bool">Paid</option>
+            </optgroup>
+            <optgroup label="Version">
+              <option>Application Version</option>
+            </optgroup>
+            <optgroup label="Events">
+              <option>Log In: Count across all app versions</option>
+              <option>Log In: Count for current app version</option>
+              <option data-field="time">Log In: Time since last Event</option>
+              <option>Log Out: Count across all app versions</option>
+              <option>Log Out: Count for current app version</option>
+              <option data-field="time">Log Out: Time since last Event</option>
+              <option>Purchase: Count across all app versions</option>
+              <option>Purchase: Count for current app version</option>
+              <option data-field="time">Purchase: Time since last Event</option>
+              <option>View Cart: Count across all app versions</option>
+              <option>View Cart: Count for current app version</option>
+              <option data-field="time">View Cart: Time since last Event</option>
+            </optgroup>
+            <optgroup label="Interaction">
+              <option>Customer Survey: Count across all app versions</option>
+              <option>Customer Survey: Count for current app version</option>
+              <option data-field="time">Customer Survey: Time since last seen</option>
+              <option>Feedback Form: Count across all app versions</option>
+              <option>Feedback Form: Count for current app version</option>
+              <option data-field="time">Feedback Form: Time since last seen</option>
+            </optgroup>
+          </select>
+          <span class="delete">remove</span>
+        </div>
+      </div>
+      <!-- <button class="copy-segment">Add segment</button> -->
+
+    </div>
+
+
+
+
+  </div>
+
+</body>
+
+</html>

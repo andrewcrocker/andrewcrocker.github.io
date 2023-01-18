@@ -1,0 +1,682 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<script src="//cdn.optimizely.com/js/3695480945.js"></script>
+<meta charset="utf-8">
+<title>Segment Wizard Prototype</title>
+
+<link rel="stylesheet" href="normalize.css">
+<link rel="stylesheet" href="css.css">
+
+<style>
+*,*:after,*:before {
+    box-sizing: border-box;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.select-a-rule {
+  /*display: none;*/
+  position: relative;
+}
+
+.select-a-rule .dropdown {
+  /* Size & position */
+    position: absolute;
+    top: -10px;
+    left: 0px;
+    right: 0px;
+
+    /* Styles */
+    background: white;
+    transition: all 0.15s ease-out;
+    list-style: none;
+
+    /* Hiding */
+    opacity: 0;
+    pointer-events: none;
+
+    border: 1px solid #aaa;
+    margin-left: 25px;
+    padding: 0;
+    border-radius: 1px;
+
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    margin-top: 0;
+    width: 400px;
+
+}
+.select-a-rule .dropdown li strong {
+    display: block;
+    text-decoration: none;
+    color: #bbb;
+    border-top: 2px solid #C1CBDB;
+    padding: 10px;
+    transition: all 0.1s ease-out;
+    font-weight: 700;
+}
+.select-a-rule .dropdown li:first-child strong {
+  border: 0px none;
+}
+.select-a-rule .dropdown li a {
+    display: block;
+    text-decoration: none;
+    color: #333;
+    border-top: 1px solid #eee;
+    padding: 10px 16px;
+    transition: all 0.1s ease-out;
+}
+
+
+.select-a-rule .dropdown li i {
+  display: none;
+  margin-right: 5px;
+  color: inherit;
+  vertical-align: middle;
+}
+
+/* Hover state */
+
+.select-a-rule .dropdown li:hover a {
+    color: #222;
+    background-color: #71D1FF;
+}
+.select-a-rule.active {
+  display: block;
+}
+.select-a-rule.active:after {
+    border-width: 0 6px 6px 6px;
+}
+
+.select-a-rule.active .dropdown {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.icon-large {
+  display: inline-block;
+  background-color: #E8ECF1;
+  width: 16px;
+  height: 16px;
+  border-radius: 100%;
+}
+
+.rule-group {
+  padding: 4px;
+  min-width: 720px;
+}
+
+.rule-name {
+  margin-right: 10px;
+  width: 200px;
+  display: inline-block;
+  text-align: right;
+}
+
+.detail-row {
+  margin-left: 20px;
+  padding: 4px;
+}
+
+.extra-controls {
+  display: inline-block;
+}
+
+.segment {
+  /* border: 1px solid #979797;
+  padding: 10px;
+  margin-bottom: 4px;
+  */
+}
+
+.rules {
+
+}
+
+span.add-rule {
+
+}
+
+.add-segment {
+  width: 100%;
+  border: 1px dashed #979797;
+  color: #468EE5;
+  background: #ffffff;
+  margin-top: 4px;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+}
+
+.base-rule {
+  position: relative;
+}
+.wizard-popup {
+  display: none;
+  position: absolute;
+  background: #F8F8F8;
+  border: 1px solid #A8A8A8;
+  width: 495px;
+  left: 210px;
+  top: 39px;
+  padding: 10px;
+  z-index: 1;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(0,0,0,.15);
+}
+.wizard-popup:after, .wizard-popup:before {
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+
+}
+.wizard-popup:after {
+  border-color: rgba(248, 248, 248, 0);
+  border-bottom-color: #F8F8F8;
+  border-width: 10px;
+  margin-left: -10px;
+}
+.wizard-popup:before {
+  border-color: rgba(168, 168, 168, 0);
+  border-bottom-color: #A8A8A8;
+  border-width: 11px;
+  margin-left: -11px;
+}
+
+.wizard-popup .help-text {
+  display: inline-block;
+  margin-right: 10px;
+}
+.wizard-popup select {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.wizard-popup input {
+  display: block;
+  /*padding: 4px;
+  height: 32px;
+  font-size: 16px;
+  margin-bottom: 10px;*/
+}
+
+.wizard-popup .save-rule {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background:#468EE5;
+  color: #fff;
+}
+.wizard-popup .save-rule:hover {
+  background-color: #377FCD;
+}
+
+span.comparator-text {
+  background-color: #eee;
+  padding: 0px 12px 0 8px;
+  /*height: 32px;*/
+  color: #949494;
+  border: 1px solid #c2c9d3;
+  border-right: 0;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  display: inline-block;
+  /*vertical-align: bottom;*/
+  margin: -1px 0 0 0;
+  min-width: 7em;
+  vertical-align: middle;
+  height: 2.3em;
+  line-height: 2.3em;
+}
+span.comparator-text + input {
+  margin-left: -6px;
+}
+
+input.popup-input {
+  /*padding: 0px 8px;
+  height: 32px;
+  border: 2px solid #979797;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  display: inline-block;
+  margin: 0;
+  margin-right: 10px;
+  font-size: 16px; */
+  width: 400px;
+}
+
+.tab-bar {
+  border-bottom: 1px solid #BDBDBD;
+  width: 100%;
+  margin-bottom: 10px;
+  padding-top:10px;
+}
+.tab-bar .tab-item:first-child {
+  margin-left: 0;
+}
+.tab-bar .tab-item {
+  display: inline-block;
+  padding: 7px;
+  color: #000000;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
+}
+.tab-bar .tab-item.on {
+  border-bottom: 3px solid #468EE5;
+  cursor: default;
+  font-weight: bold;
+}
+.tab-bar > * {
+  margin-bottom: -1px;
+}
+
+.detail-holder p {
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+}
+</style>
+</head>
+<body class="v-helper">
+<div class="wrapper">
+  <h1>Interaction Target - Select people who match the following:</h1>
+
+  <div id="container">
+    <div id="segments"></div>
+
+    <div class="select-a-rule">
+      <ul class="dropdown">
+        <li class="events"><strong>Events</strong></li>
+        <li class="events"><a href="#" class="add-new-rule" data-group="events" data-field="has-seen-event" data-type="details"><i class="icon-large"></i>Has seen...</a></li>
+        <li class="interactions"><strong>Interactions</strong></li>
+        <li class="interactions"><a href="#" class="add-new-rule" data-group="interactions" data-field="love-the-app" data-type="boolean"><i class="icon-large"></i>Love the app...</a></li>
+        <li class="interactions"><a href="#" class="add-new-rule" data-group="interactions" data-field="has-seen-interaction" data-type="details"><i class="icon-large"></i>Have seen...</a></li>
+        <li class="device"><strong>Person &amp; Device Data</strong></li>
+        <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="first-seen" data-type="number"><i class="icon-large"></i>First seen...</a></li>
+        <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="country" data-type="string"><i class="icon-large"></i>Country...</a></li>
+        <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="language" data-type="string"><i class="icon-large"></i>Language...</a></li>
+        <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="model" data-type="string"><i class="icon-large"></i>Device Model...</a></li>
+        <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="os-version" data-type="string"><i class="icon-large"></i>OS Version...</a></li>
+        <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="app-version" data-type="number"><i class="icon-large"></i>App Version...</a></li>
+        <li class="custom"><strong>Custom Data</strong></li>
+        <li class="custom"><a href="#" class="add-new-rule" data-group="custom_data" data-field="user-id" data-type="string"><i class="icon-large"></i>User_ID...</a></li>
+        <li class="custom"><a href="#" class="add-new-rule" data-group="custom_data" data-field="user-age" data-type="number"><i class="icon-large"></i>Age</a></li>
+        <li class="custom"><a href="#" class="add-new-rule" data-group="custom_data" data-field="user-paid" data-type="boolean"><i class="icon-large"></i>Paid</a></li>
+      </ul>
+    </div>
+
+    <button class="add-segment">Add Segment</button>
+  </div>
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+var total_sets = 0;
+var total_rules = 0;
+
+function DropDown(el) {
+  this.dd = el;
+  this.initEvents();
+}
+DropDown.prototype = {
+  initEvents : function() {
+    var obj = this;
+    obj.dd.on('click', function(event){
+      $(this).toggleClass('active');
+      event.stopPropagation();
+    });
+  }
+}
+$(document).click(function() {
+  $('.select-a-rule').removeClass('active');
+});
+
+$('.add-segment').on('click', function(ev){
+  ev.preventDefault();
+  $('.wizard-popup').fadeOut();
+  addSegment();
+});
+
+function addSegment() {
+  total_sets += 1;
+  $('#segments').append('<div class="segment" data-set="' + total_sets + '"><div class="head"><div class="rules"></div><span class="add-rule select">Add Rule</span></div>');
+  if (total_sets >= 1) {
+    $('.add-segment').hide();
+  }
+}
+
+$('#segments').on('click', '.add-rule', function(ev){
+  ev.preventDefault();
+  ev.stopPropagation();
+  $('.wizard-popup').fadeOut();
+  $('.select-a-rule').toggleClass('active');
+});
+
+$('.add-new-rule').on('click', function(ev){
+  ev.preventDefault();
+  $('.wizard-popup').fadeOut();
+  total_rules += 1;
+  var group = ev.currentTarget.getAttribute('data-group');
+  var field = ev.currentTarget.getAttribute('data-field');
+  var type = ev.currentTarget.getAttribute('data-type');
+  var text = ev.currentTarget.textContent;
+  if (group && field && type) {
+    addRule(group, field, type, total_rules, text);
+  }
+});
+
+$('#segments').on('click', '.remove-rule-row', function(ev){
+  ev.preventDefault();
+  $('.wizard-popup').fadeOut();
+  var id = ev.currentTarget.getAttribute('data-id');
+  if (id) {
+    $('.rule-group[data-id="' + id +'"]').remove();
+  }
+});
+
+$('#segments').on('focus', '.popup-input', function(ev){
+  ev.preventDefault();
+  var id = ev.currentTarget.getAttribute('data-id');
+  if (id) {
+    $('.wizard-popup').fadeOut();
+    $('.wizard-popup[data-id="' + id +'"]').fadeIn();
+  }
+});
+
+$('#segments').on('click', '.save-rule', function(ev){
+  ev.preventDefault();
+  var id = ev.currentTarget.getAttribute('data-id');
+  var comparator_value = $('.comparator-value[data-id="' + id +'"]').val() || '';
+  var input_value = $('.real-input-value[data-id="' + id +'"]').val() || '';
+  input_value += ' ';
+  input_value += $('.real-input-value-a[data-id="' + id +'"]').val() || '';
+  input_value += ' ';
+  input_value += $('.real-input-value-b[data-id="' + id +'"]').val() || '';
+  input_value += ' ';
+  input_value += $('.real-input-value-c[data-id="' + id +'"]').val() || '';
+
+  if (id) {
+    $('.comparator-text[data-id="' + id +'"]').text(comparator_value.trim());
+    $('.popup-input[data-id="' + id +'"]').val(input_value.trim());
+    $('.wizard-popup[data-id="' + id +'"]').fadeOut();
+  }
+});
+
+$('#segments').on('click', '.detail-select', function(ev){
+  ev.preventDefault();
+  $('.detail-select').removeClass('on')
+  $(ev.currentTarget).addClass('on')
+  if (ev) {
+    addExtraControls(ev);
+  }
+});
+
+function addRule(group, field, type, number, text){
+  var uuid = generateUUID();
+  var rule_group = $('<div class="rule-group" data-rule="' + number + '" data-id="' + uuid + '"></div>');
+  rule_group.attr('data-rule', number);
+
+  var base_rule = $('<div class="base-rule"></div>');
+
+  var rule_name = $('<div class="rule-name">' + text + '</div>');
+  base_rule.append(rule_name);
+
+  var rule_selector = '';
+  rule_selector += '<span class="comparator-text" data-id="' + uuid + '" data-rule="' + number + '" data-group="' + group + '" data-field="' + field + '"></span>';
+  rule_selector += '<input type="text" class="popup-input" data-id="' + uuid + '" data-rule="' + number + '" data-group="' + group + '" data-field="' + field + '"/>';
+  rule_selector += '<div class="wizard-popup" data-id="' + uuid + '" data-rule="' + number + '" data-group="' + group + '" data-field="' + field + '">';
+  switch (group) {
+    case 'events':
+      switch (field) {
+        case 'has-seen-event':
+          rule_selector += '<span class="help-text">Select Event:</span>';
+          rule_selector += '<select class="comparator-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Log In">Log In</option>';
+          rule_selector += '<option value="Log Out">Log Out</option>';
+          rule_selector += '<option value="Purchase">Purchase</option>';
+          rule_selector += '<option value="View Cart">View Cart</option>';
+          rule_selector += '</select>';
+          rule_selector += '<div class="tab-bar" data-id="' + uuid + '">';
+          rule_selector += '<div class="detail-select tab-item" data-value="In current version" data-id="' + uuid + '">In current version</div>';
+          rule_selector += '<div class="detail-select tab-item" data-value="In all versions" data-id="' + uuid + '">In all versions</div>';
+          rule_selector += '<div class="detail-select tab-item" data-value="Time Since..." data-id="' + uuid + '">Time Since...</div>';
+          rule_selector += '</div>';
+          rule_selector += '<div class="detail-holder" data-id="' + uuid + '"><p>Please select a tab above.</p></div>';
+          break;
+      }
+      break;
+    case 'interactions':
+      switch (field) {
+        case 'love-the-app':
+          rule_selector += '<input type="hidden" class="comparator-value" value="answered" data-id="' + uuid + '">';
+          rule_selector += '<select class="real-input-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Yes, love it">Yes, love it</option>';
+          rule_selector += '<option value="No, don\'t love it.">No, don\'t love it.</option>';
+          rule_selector += '</select>';
+          break;
+        case 'has-seen-interaction':
+          rule_selector += '<span class="help-text">Select Interaction:</span>';
+          rule_selector += '<select class="comparator-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Any Interaction">Any Interaction</option>';
+          rule_selector += '<option value="Customer Survey">Customer Survey</option>';
+          rule_selector += '<option value="Feedback Form">Feedback Form</option>';
+          rule_selector += '</select>';
+          rule_selector += '<div class="tab-bar" data-id="' + uuid + '">';
+          rule_selector += '<div class="detail-select tab-item" data-value="Times Seen">Times Seen</div>';
+          rule_selector += '<div class="detail-select tab-item" data-value="Time Since">Time Since</div>';
+          rule_selector += '</div>';
+          rule_selector += '<div class="detail-holder" data-id="' + uuid + '"><p>Please select a tab above.</p></div>';
+          break;
+      }
+      break;
+    case 'device':
+      switch (field) {
+        case 'first-seen':
+          rule_selector += '<select class="comparator-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Before">Before</option>';
+          rule_selector += '<option value="After">After</option>';
+          rule_selector += '</select>';
+          rule_selector += '<input class="real-input-value" type="number" value="" name="number" data-id="' + uuid + '"/>';
+          rule_selector += '<select class="real-input-value-a" data-id="' + uuid + '">';
+          rule_selector += '<option value="Seconds">Seconds</option>';
+          rule_selector += '<option value="Minutes">Minutes</option>';
+          rule_selector += '<option value="Hours">Hours</option>';
+          rule_selector += '<option value="Days">Days</option>';
+          rule_selector += '<option value="Weeks">Weeks</option>';
+          rule_selector += '<option value="Months">Months</option>';
+          rule_selector += '<option value="Years">Years</option>';
+          rule_selector += '</select>';
+          rule_selector += '<span class="text">ago</span>';
+          rule_selector += '<input type="hidden" class="real-input-value-b" value="ago" data-id="' + uuid + '">';
+          break;
+        case 'country':
+          rule_selector += '<select class="comparator-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Is">Is</option>';
+          rule_selector += '<option value="Is Not">Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<select class="real-input-value" data-id="' + uuid + '">';
+          rule_selector += '<option>Austria</option>';
+          rule_selector += '<option>Canada</option>';
+          rule_selector += '<option>Denmark</option>';
+          rule_selector += '<option>France</option>';
+          rule_selector += '<option>Germany</option>';
+          rule_selector += '<option>UK</option>';
+          rule_selector += '<option>USA</option>';
+          rule_selector += '</select>';
+          break;
+        case 'language':
+          rule_selector += '<select class="comparator-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Is">Is</option>';
+          rule_selector += '<option value="Is Not">Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<select class="real-input-value" data-id="' + uuid + '">';
+          rule_selector += '<option>Dutch</option>';
+          rule_selector += '<option>English</option>';
+          rule_selector += '<option>French</option>';
+          rule_selector += '<option>German</option>';
+          rule_selector += '</select>';
+          break;
+        case 'model':
+          rule_selector += '<select class="comparator-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Is">Is</option>';
+          rule_selector += '<option value="Is Not">Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<input class="real-input-value" type="text" value="" name="text" data-id="' + uuid + '"/>';
+          break;
+        case 'os-version':
+          rule_selector += '<select class="comparator-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Greater Than">Greater Than</option>';
+          rule_selector += '<option value="Less Than">Less Than</option>';
+          rule_selector += '<option value="Is">Is</option>';
+          rule_selector += '<option value="Is Not">Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<select class="real-input-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="2.2">2.2</option>';
+          rule_selector += '<option value="4.0">4.0</option>';
+          rule_selector += '<option value="4.4">4.4</option>';
+          rule_selector += '<option value="5.0">5.0</option>';
+          rule_selector += '<option value="5.1">5.1</option>';
+          rule_selector += '</select>';
+          break;
+        case 'app-version':
+          rule_selector += '<select class="comparator-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Greater Than">Greater Than</option>';
+          rule_selector += '<option value="Less Than">Less Than</option>';
+          rule_selector += '<option value="Is">Is</option>';
+          rule_selector += '<option value="Is Not">Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<select class="real-input-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="1.0">1.0</option>';
+          rule_selector += '<option value="1.5">1.5</option>';
+          rule_selector += '<option value="1.8">1.8</option>';
+          rule_selector += '<option value="2.0">2.0</option>';
+          rule_selector += '<option value="2.1">2.1</option>';
+          rule_selector += '<option value="3.2">3.2</option>';
+          rule_selector += '</select>';
+          break;
+      }
+      break;
+    case 'custom_data':
+      switch (field) {
+        case 'user-paid':
+          rule_selector += '<input class="comparator-value" type="hidden" value="Is" data-id="' + uuid + '"/>';
+          rule_selector += '<select class="real-input-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="True">True</option>';
+          rule_selector += '<option value="False">False</option>';
+          rule_selector += '</select>';
+          break;
+        case 'user-id':
+          rule_selector += '<select class="comparator-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Is">Is</option>';
+          rule_selector += '<option value="Is Not">Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<input class="real-input-value" type="text" value="" name="text" data-id="' + uuid + '"/>';
+          break;
+        case 'user-age':
+          rule_selector += '<select class="comparator-value" data-id="' + uuid + '">';
+          rule_selector += '<option value="Greater Than">Greater Than</option>';
+          rule_selector += '<option value="Less Than">Less Than</option>';
+          rule_selector += '<option value="Is">Is</option>';
+          rule_selector += '<option value="Is Not">Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<input class="real-input-value" type="number" value="" name="number" data-id="' + uuid + '"/>';
+          break;
+      }
+      break;
+  }
+
+  rule_selector += '<button class="save-rule" data-id="' + uuid + '" data-rule="' + number + '" data-group="' + group + '" data-field="' + field + '">Save</button>';
+  rule_selector += '</div>';
+  rule_selector += '<a class="remove-rule-row" data-id="' + uuid + '">&#10005;</a>';
+
+  rule_selector = $(rule_selector);
+  base_rule.append(rule_selector);
+
+  rule_group.append(base_rule);
+
+  var sub_rules = $('<div class="sub-rules"></div>');
+  rule_group.append(sub_rules);
+
+  $('.rules').append(rule_group);
+  $('.rule-group[data-rule="' + number + '"]').find('.popup-input').focus();
+}
+
+function addExtraControls (ev) {
+  var extra_controls = $(ev.currentTarget).parent().parent().find('.detail-holder');
+  var value = ev.currentTarget.getAttribute('data-value');
+  var uuid = ev.currentTarget.getAttribute('data-id');
+
+  var rule_selector = '';
+  rule_selector += '<input class="real-input-value" type="hidden" value="' + value + '" data-id="' + uuid + '"/>';
+  switch (value) {
+    // Events
+    case 'In current version':
+      rule_selector += '<select class="real-input-value-a" data-id="' + uuid + '">';
+      rule_selector += '<option value="greater than">greater than</option>';
+      rule_selector += '<option value="less than">less than</option>';
+      rule_selector += '<option value="equal to">equal to</option>';
+      rule_selector += '<option value="not equal to">not equal to</option>';
+      rule_selector += '</select>';
+      rule_selector += '<input class="real-input-value-b" type="number" value="" name="number" data-id="' + uuid + '"/>';
+      break;
+    case 'In all versions':
+      rule_selector += '<select class="real-input-value-a" data-id="' + uuid + '">';
+      rule_selector += '<option value="greater than">greater than</option>';
+      rule_selector += '<option value="less than">less than</option>';
+      rule_selector += '<option value="equal to">equal to</option>';
+      rule_selector += '<option value="not equal to">not equal to</option>';
+      rule_selector += '</select>';
+      rule_selector += '<input class="real-input-value-b" type="number" value="" name="number" data-id="' + uuid + '"/>';
+      break;
+    case 'Time Since':
+      rule_selector += '<select class="real-input-value-a" data-id="' + uuid + '">';
+      rule_selector += '<option value="greater than">greater than</option>';
+      rule_selector += '<option value="less than">less than</option>';
+      rule_selector += '<option value="equal to">equal to</option>';
+      rule_selector += '<option value="not equal to">not equal to</option>';
+      rule_selector += '</select>';
+      rule_selector += '<input class="real-input-value-b" type="number" value="" name="number" data-id="' + uuid + '"/>';
+      rule_selector += '<select class="real-input-value-c" data-id="' + uuid + '">';
+      rule_selector += '<option value="seconds">seconds</option>';
+      rule_selector += '<option value="minutes">minutes</option>';
+      rule_selector += '<option value="hours">hours</option>';
+      rule_selector += '<option value="days">days</option>';
+      rule_selector += '<option value="weeks">weeks</option>';
+      rule_selector += '<option value="months">months</option>';
+      rule_selector += '<option value="years">years</option>';
+      rule_selector += '</select>';
+      break;
+    // Interactions
+    case 'Times Seen':
+      rule_selector += '<input class="real-input-value-a" type="number" value="" name="number" data-id="' + uuid + '"/>';
+      rule_selector += '<input type="hidden" class="real-input-value-b" value="times" data-id="' + uuid + '">';
+      break;
+  }
+
+  var rule_selector = $(rule_selector);
+  extra_controls.empty().append(rule_selector);
+  ev.currentTarget.selected = 0;
+}
+
+function generateUUID(){
+  var d = new Date().getTime();
+  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = (d + Math.random()*16)%16 | 0;
+    d = Math.floor(d/16);
+    return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+  });
+  return uuid;
+}
+
+$(document).ready(function() {
+  $('button.add-segment').trigger('click');
+});
+</script>
+</body>
+</html>

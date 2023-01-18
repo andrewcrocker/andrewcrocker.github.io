@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="//cdn.optimizely.com/js/3695480945.js"></script>
+<meta charset="utf-8">
+<title>Segment Builder Prototype</title>
+
+<link rel="stylesheet" href="normalize.css">
+<link rel="stylesheet" href="css.css">
+
+<style>
+*,*:after,*:before {
+    box-sizing: border-box;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.select-a-rule,
+.select-a-rule .select {
+    position: relative;
+    width: 300px;
+    background-image: none;
+    /*
+    padding: 10px 15px;
+    background: #fff;
+    border: 2px solid #4E6B92;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    */
+}
+.select-a-rule .select:after {
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    margin-top: -3px;
+    border-width: 6px 6px 0 6px;
+    border-style: solid;
+    border-color: #363738 transparent;
+}
+
+.select-a-rule .dropdown {
+  /* Size & position */
+    position: absolute;
+    top: 70%;
+    left: -45px;
+    right: 0px;
+
+    /* Styles */
+    background: white;
+    transition: all 0.15s ease-out;
+    list-style: none;
+
+    /* Hiding */
+    opacity: 0;
+    pointer-events: none;
+
+    border: 1px solid #aaa;
+    margin-left: 45px;
+    padding: 0;
+    border-radius: 1px;
+
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+
+}
+.select-a-rule .dropdown li strong {
+    display: block;
+    text-decoration: none;
+    color: #333;
+    border-top: 2px solid #C1CBDB;
+    padding: 10px;
+    transition: all 0.3s ease-out;
+    font-weight: 700;
+}
+.select-a-rule .dropdown li:first-child strong {
+  border-top: 0px none;
+}
+.select-a-rule .dropdown li a {
+    display: block;
+    text-decoration: none;
+    color: #333;
+    border-top: 1px dotted rgba(0,0,0,.1);
+    padding: 10px;
+    transition: all 0.3s ease-out;
+}
+
+.select-a-rule .dropdown li:nth-child(1) a {
+    border-left-color: #00ACED;
+}
+
+.select-a-rule .dropdown li:nth-child(2) a {
+    border-left-color: #4183C4;
+}
+
+.select-a-rule .dropdown li:nth-child(3) a {
+    border-left-color: #3B5998;
+}
+
+.select-a-rule .dropdown li i {
+    margin-right: 5px;
+    color: inherit;
+    vertical-align: middle;
+}
+
+/* Hover state */
+
+.select-a-rule .dropdown li:hover a {
+    color: #516D94;
+    background-color: #71D1FF;
+}
+.select-a-rule.active:after {
+    border-width: 0 6px 6px 6px;
+}
+
+.select-a-rule.active .dropdown {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.rule-group {
+  margin-bottom: 10px;
+  padding-bottom: 4px;
+}
+
+.rule-name {
+  border: 1px solid #eee;
+  border-radius: 1.15em;
+  padding: 9px;
+  vertical-align: middle;
+  width: 300px;
+  display: inline-block;
+  margin: 0 5px 0 0;
+}
+
+.detail-row {
+  margin-left: 20px;
+  padding: 8px 0 0 0;
+}
+
+.sub-rules {
+  background: url(sub.svg) repeat-y 1em 100%;
+}
+
+.extra-controls {
+  display: inline-block;
+}
+
+
+span.text {
+  border: 1px solid transparent;
+  border-width: 1px 0;
+  padding: 10px 5px;
+}
+
+</style>
+</head>
+<body class="v-fs">
+<div class="wrapper">
+
+  <h1>Interaction Target - Select people who match the following:</h1>
+
+  <div id="rules"></div>
+
+  <div id="everyone" class="select-a-rule">
+    <span class="select">Add A Rule...</span>
+    <ul class="dropdown">
+      <li class="events"><strong>Events</strong></li>
+      <li class="events"><a href="#" class="add-new-rule" data-group="events" data-field="has-seen-event" data-type="details"><i class="icon-large"></i>Has seen [event]...</a></li>
+      <li class="interactions"><strong>Interactions</strong></li>
+      <li class="interactions"><a href="#" class="add-new-rule" data-group="interactions" data-field="love-the-app" data-type="boolean"><i class="icon-large"></i>Love the app...</a></li>
+      <li class="interactions"><a href="#" class="add-new-rule" data-group="interactions" data-field="has-seen-interaction" data-type="details"><i class="icon-large"></i>Have Seen [interaction]...</a></li>
+      <li class="device"><strong>Person &amp; Device Data</strong></li>
+      <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="first-seen" data-type="number"><i class="icon-large"></i>First seen...</a></li>
+      <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="country" data-type="string"><i class="icon-large"></i>Country...</a></li>
+      <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="language" data-type="string"><i class="icon-large"></i>Language...</a></li>
+      <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="model" data-type="string"><i class="icon-large"></i>Device Model...</a></li>
+      <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="os-version" data-type="string"><i class="icon-large"></i>OS Version...</a></li>
+      <li class="device"><a href="#" class="add-new-rule" data-group="device" data-field="app-version" data-type="number"><i class="icon-large"></i>App Version...</a></li>
+      <li class="custom"><strong>Custom Data</strong></li>
+      <li class="custom"><a href="#" class="add-new-rule" data-group="custom_data" data-field="user-id" data-type="string"><i class="icon-large"></i>User_ID...</a></li>
+      <li class="custom"><a href="#" class="add-new-rule" data-group="custom_data" data-field="user-age" data-type="number"><i class="icon-large"></i>Age</a></li>
+      <li class="custom"><a href="#" class="add-new-rule" data-group="custom_data" data-field="user-paid" data-type="boolean"><i class="icon-large"></i>Paid</a></li>
+    </ul>
+  </div>
+
+  <!-- <button class="add-another-group">Add another group (OR)</button> -->
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+var total_rules = 0;
+
+function DropDown(el) {
+  this.dd = el;
+  this.initEvents();
+}
+DropDown.prototype = {
+  initEvents : function() {
+    var obj = this;
+    obj.dd.on('click', function(event){
+      $(this).toggleClass('active');
+      event.stopPropagation();
+    });
+  }
+}
+$(function() {
+  var dd = new DropDown( $('#everyone') );
+  $(document).click(function() {
+    $('.select-a-rule').removeClass('active');
+  });
+});
+
+$('.add-new-rule').on('click', function(ev){
+  ev.preventDefault();
+  total_rules += 1;
+  var group = ev.currentTarget.getAttribute('data-group');
+  var field = ev.currentTarget.getAttribute('data-field');
+  var type = ev.currentTarget.getAttribute('data-type');
+  var text = ev.currentTarget.textContent;
+  if (group && field && type) {
+    addNewRule(group, field, type, total_rules, text);
+  }
+});
+
+$('#rules').on('click', '.add-details', function(ev){
+  ev.preventDefault();
+  var number = ev.currentTarget.getAttribute('data-number');
+  var group = ev.currentTarget.getAttribute('data-group');
+  var field = ev.currentTarget.getAttribute('data-field');
+  if (number) {
+    addNewDetail(group, field, number);
+  }
+});
+
+$('#rules').on('change', '.detail-select', function(ev){
+  ev.preventDefault();
+  if (ev) {
+    addExtraControls(ev);
+  }
+});
+
+$('#rules').on('click', '.remove-detail-row', function(ev){
+  ev.preventDefault();
+  var id = ev.currentTarget.getAttribute('data-id');
+  if (id) {
+    $('.detail-row[data-id="' + id +'"]').remove();
+  }
+});
+
+$('#rules').on('click', '.remove-rule-row', function(ev){
+  ev.preventDefault();
+  var id = ev.currentTarget.getAttribute('data-id');
+  if (id) {
+    $('.rule-group[data-id="' + id +'"]').remove();
+  }
+});
+
+var comparators = '';
+comparators += '<select>';
+comparators += '<option>Greater Than</option>';
+comparators += '<option>Less Than</option>';
+comparators += '<option>Equal To</option>';
+comparators += '<option>Not Equal To</option>';
+comparators += '</select>';
+
+var units = '';
+units += '<select>';
+units += '<option>Seconds</option>';
+units += '<option>Minutes</option>';
+units += '<option>Hours</option>';
+units += '<option>Days</option>';
+units += '<option>Weeks</option>';
+units += '<option>Months</option>';
+units += '<option>Years</option>';
+units += '</select>';
+
+var number_input = '<input type="number" value="0" name="number">';
+var text_input = '<input type="text" value="" name="text">';
+
+function addNewRule(group, field, type, number, text){
+  var uuid = generateUUID();
+  var rule_group = $('<div class="rule-group" data-rule="' + number + '" data-id="' + uuid + '"></div>');
+  rule_group.attr('data-rule', number);
+
+  var base_rule = $('<div class="base-rule"></div>');
+
+  var rule_name = $('<div class="rule-name">' + text + '</div>');
+  base_rule.append(rule_name);
+
+  var rule_selector = '';
+  switch (group) {
+    case 'events':
+      switch (field) {
+        case 'has-seen-event':
+          rule_selector  = '<select>';
+          rule_selector += '<option>Log In</option>';
+          rule_selector += '<option>Log Out</option>';
+          rule_selector += '<option>Purchase</option>';
+          rule_selector += '<option>View Cart</option>';
+          rule_selector += '</select>';
+          rule_selector += '<button class="add-details" data-number="' + number + '" data-group="' + group + '" data-field="' + field + '">Details</button>';
+          break;
+      }
+      break;
+    case 'interactions':
+      switch (field) {
+        case 'love-the-app':
+          rule_selector  = "<select>";
+          rule_selector += "<option>Yes, love it</option>";
+          rule_selector += "<option>No, don't love it.</option>";
+          rule_selector += "</select>";
+          break;
+        case 'has-seen-interaction':
+          rule_selector  = '<select>';
+          rule_selector += '<option>Any Interaction</option>';
+          rule_selector += '<option>Customer Survey</option>';
+          rule_selector += '<option>Feedback Form</option>';
+          rule_selector += '</select>';
+          rule_selector += '<button class="add-details" data-number="' + number + '" data-group="' + group + '" data-field="' + field + '">Details</button>';
+          break;
+      }
+      break;
+    case 'device':
+      switch (field) {
+        case 'first-seen':
+          rule_selector  = "<select>";
+          rule_selector += "<option>Before</option>";
+          rule_selector += "<option>After</option>";
+          rule_selector += "</select>";
+          rule_selector += number_input;
+          rule_selector += units;
+          rule_selector += '<span class="text">ago</span>';
+          break;
+        case 'country':
+          rule_selector  = '<select>';
+          rule_selector += '<option>Is</option>';
+          rule_selector += '<option>Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<select>';
+          rule_selector += '<option>Austria</option>';
+          rule_selector += '<option>Canada</option>';
+          rule_selector += '<option>Denmark</option>';
+          rule_selector += '<option>France</option>';
+          rule_selector += '<option>Germany</option>';
+          rule_selector += '<option>UK</option>';
+          rule_selector += '<option>USA</option>';
+          rule_selector += '</select>';
+          break;
+        case 'language':
+          rule_selector  = '<select>';
+          rule_selector += '<option>Is</option>';
+          rule_selector += '<option>Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<select>';
+          rule_selector += '<option>Dutch</option>';
+          rule_selector += '<option>English</option>';
+          rule_selector += '<option>French</option>';
+          rule_selector += '<option>German</option>';
+          rule_selector += '</select>';
+          break;
+        case 'model':
+          rule_selector  = '<select>';
+          rule_selector += '<option>Is</option>';
+          rule_selector += '<option>Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += text_input;
+          break;
+        case 'os-version':
+          rule_selector  = '<select>';
+          rule_selector += '<option>Greater Than</option>';
+          rule_selector += '<option>Less Than</option>';
+          rule_selector += '<option>Is</option>';
+          rule_selector += '<option>Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<select>';
+          rule_selector += '<option>2.2</option>';
+          rule_selector += '<option>4.0</option>';
+          rule_selector += '<option>4.4</option>';
+          rule_selector += '<option>5.0</option>';
+          rule_selector += '<option>5.1</option>';
+          rule_selector += '</select>';
+          break;
+        case 'app-version':
+          rule_selector  = '<select>';
+          rule_selector += '<option>Greater Than</option>';
+          rule_selector += '<option>Less Than</option>';
+          rule_selector += '<option>Is</option>';
+          rule_selector += '<option>Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += '<select>';
+          rule_selector += '<option>1.0</option>';
+          rule_selector += '<option>1.5</option>';
+          rule_selector += '<option>1.8</option>';
+          rule_selector += '<option>2.0</option>';
+          rule_selector += '<option>2.1</option>';
+          rule_selector += '<option>3.2</option>';
+          rule_selector += '</select>';
+          break;
+      }
+      break;
+    case 'custom_data':
+      switch (field) {
+        case 'user-paid':
+          rule_selector  = '<select>';
+          rule_selector += '<option>True</option>';
+          rule_selector += '<option>False</option>';
+          rule_selector += '</select>';
+          break;
+        case 'user-id':
+          rule_selector  = '<select>';
+          rule_selector += '<option>Is</option>';
+          rule_selector += '<option>Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += text_input;
+          break;
+        case 'user-age':
+          rule_selector  = '<select>';
+          rule_selector += '<option>Greater Than</option>';
+          rule_selector += '<option>Less Than</option>';
+          rule_selector += '<option>Is</option>';
+          rule_selector += '<option>Is Not</option>';
+          rule_selector += '</select>';
+          rule_selector += number_input;
+          break;
+      }
+      break;
+  }
+
+  rule_selector += '<span class="remove-rule-row" data-id="' + uuid + '">Remove</span>';
+
+  rule_selector = $(rule_selector);
+  base_rule.append(rule_selector);
+
+  rule_group.append(base_rule);
+
+  var sub_rules = $('<div class="sub-rules"></div>');
+  rule_group.append(sub_rules);
+
+  $('#rules').append(rule_group);
+}
+
+function addNewDetail (group, field, number) {
+  var rule_group = $('.rule-group[data-rule=' + number + ']');
+  var sub_rules = $('.sub-rules', rule_group);
+
+  var uuid = generateUUID();
+
+  var base_rule = $('<div class="detail-row" data-id="' + uuid + '"></div>');
+
+  var rule_selector = '';
+  switch (group) {
+    case 'events':
+      switch (field) {
+        case 'has-seen-event':
+          rule_selector  = '<select class="detail-select">';
+          rule_selector += '<option disabled selected>Select Detail</option>';
+          rule_selector += '<option value="has-seen-event-count-current-version">Count in current version...</option>';
+          rule_selector += '<option value="has-seen-event-count-all-versions">Count in all versions...</option>';
+          rule_selector += '<option value="has-seen-event-time-since">Time Since...</option>';
+          rule_selector += '</select>';
+          break;
+      }
+      break;
+    case 'interactions':
+      switch (field) {
+        case 'has-seen-interaction':
+          rule_selector  = '<select class="detail-select">';
+          rule_selector += '<option disabled selected>Select Item</option>';
+          rule_selector += '<option value="has-seen-interaction-times-seen">Times Seen...</option>';
+          rule_selector += '<option value="has-seen-interaction-time-since">Time Since...</option>';
+          rule_selector += '</select>';
+          break;
+      }
+      break;
+    case 'device':
+      break;
+    case 'custom_data':
+      break;
+  }
+
+  rule_selector = $(rule_selector);
+  base_rule.append(rule_selector);
+  base_rule.append('<div class="extra-controls"></div>');
+  base_rule.append('<span class="remove-detail-row" data-id="' + uuid + '">Remove</span>');
+
+  sub_rules.append(base_rule);
+}
+
+function addExtraControls (ev) {
+  var extra_controls = $(ev.currentTarget).parent().find('.extra-controls');
+  var rule_selector;
+  var value = $(ev.currentTarget).val();
+  switch (value) {
+    // Events
+    case 'has-seen-event-count-current-version':
+      rule_selector = comparators + number_input;
+      break;
+    case 'has-seen-event-count-all-versions':
+      rule_selector = comparators + number_input;
+      break;
+    case 'has-seen-event-time-since':
+      rule_selector = comparators + number_input + units;
+      break;
+    // Interactions
+    case 'has-seen-interaction-times-seen':
+      rule_selector = number_input + ' times';
+      break;
+    case 'has-seen-interaction-time-since':
+      rule_selector = comparators + number_input + units;
+      break;
+  }
+
+  var rule_selector = $(rule_selector);
+  extra_controls.empty().append(rule_selector);
+  ev.currentTarget.selected = 0;
+}
+
+function generateUUID(){
+  var d = new Date().getTime();
+  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = (d + Math.random()*16)%16 | 0;
+    d = Math.floor(d/16);
+    return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+  });
+  return uuid;
+}
+</script>
+</body>
+</html>
